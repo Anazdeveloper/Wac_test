@@ -21,6 +21,15 @@ class GetProfilesSuccessState extends HomeStates {
   List<Object?> get props => [profiles];
 }
 
+class GetProfilesEmptyState extends HomeStates {
+  final String message;
+
+  GetProfilesEmptyState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
 class GetProfilesFailureState extends HomeStates {
   final String failureMessage;
 

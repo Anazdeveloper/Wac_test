@@ -1,10 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wac_test/app_strings.dart';
 import 'package:wac_test/presentation/Home/home_bloc.dart';
 import 'package:wac_test/presentation/Home/home_events.dart';
 import 'package:wac_test/presentation/Home/home_states.dart';
 import 'package:wac_test/presentation/Home/profile_item_widget.dart';
+import 'package:wac_test/presentation/Profile/arguments/profile_arguments.dart';
+import 'package:wac_test/presentation/utils/widgets/app_loader.dart';
+import 'package:wac_test/presentation/utils/widgets/errors.dart';
 import 'package:wac_test/presentation/utils/widgets/wac_search_view.dart';
 
 class Home extends StatefulWidget {
@@ -16,7 +19,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  HomeBloc _homeBloc = HomeBloc();
+  final _homeBloc = HomeBloc();
 
   @override
   void initState() {
@@ -27,9 +30,9 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("WAC TEST"),
+        title: Text(AppStrings().wac_test),
       ),
-      body: Container(
+      body: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: Stack(
           children: [
@@ -38,7 +41,9 @@ class _HomeState extends State<Home> {
                 left: 10,
                 right: 10,
                 child: WacSearchView(
-
+                  onChanged: (value) {
+                    _homeBloc.add(GetProfilesEvent(name: value));
+                  },
                 )
             ),
             Positioned(
@@ -54,13 +59,34 @@ class _HomeState extends State<Home> {
                         padding: const EdgeInsets.all(8.0),
                         child: ListView.separated(
                             itemBuilder: (context, index) {
-                              return ProfileItemWidget(profile: state.profiles[index]);
+                              return ProfileItemWidget(
+                                profile: state.profiles[index],
+                                onTap: () {
+                                  Navigator.of(context).pushNamed('/profile_page', arguments: ProfileArguments(profile: state.profiles[index]));
+                                },
+                              );
                             },
                             separatorBuilder: (context, index) {
-                              return const Divider(height: 10.0,);
+                              return const Divider(height: 10.0);
                             },
                             itemCount: state.profiles.length
                         ),
+                      );
+                    }
+                    if(state is GetProfilesEmptyState) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          left: 8,
+                          right: 8,
+                        ),
+                        child: ErrorMessage(
+                          message: state.message,
+                        ),
+                      );
+                    }
+                    if(state is GetProfilesLoadingState) {
+                      return const Center(
+                        child: AppLoader()
                       );
                     }
                     return Container();

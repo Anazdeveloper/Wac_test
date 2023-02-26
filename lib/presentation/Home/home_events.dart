@@ -8,5 +8,10 @@ class HomeEvents extends Equatable {
 }
 
 class GetProfilesEvent extends HomeEvents {
+  final String ? name;
 
+  GetProfilesEvent({this.name});
+
+  @override
+  List<Object?> get props => [name];
 }
