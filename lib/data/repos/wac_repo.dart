@@ -15,13 +15,18 @@ class WacRepository {
   }
 
   Future<List<Profile>> getProfile() async {
-    try {
-      final res = await _wacHttpClient.get(urlPath: Urls.WAC_URL);
-      print(res);
+    final res = await _wacHttpClient.get(urlPath: Urls.WAC_URL);
+    if(res.statusCode == 200) {
       return List<Profile>.from(res.data.map((e) => Profile.fromJson(e)));
-    } catch (e) {
-      print(e);
-      throw ApiError(message: e.toString());
     }
+    throw ApiError(message: res.statusMessage);
+    // try {
+    //   final res = await _wacHttpClient.get(urlPath: Urls.WAC_URL);
+    //   print(res);
+    //   return List<Profile>.from(res.data.map((e) => Profile.fromJson(e)));
+    // } catch (e) {
+    //   print(e);
+    //   throw ApiError(message: e.toString());
+    // }
   }
 }

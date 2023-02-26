@@ -33,7 +33,7 @@ class WacHttpClient {
   Future<dynamic> get({urlPath, queryParameters, header}) async {
     try {
       Response response = await _dio.get(urlPath, queryParameters: queryParameters, options: Options(receiveDataWhenStatusError: true));
-      print(response);
+      print(response.statusCode);
       return response;
     } on DioError catch (e) {
       return e.response;
